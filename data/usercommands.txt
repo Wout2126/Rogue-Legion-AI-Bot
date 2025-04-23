@@ -1,1 +1,9 @@
+**List of available commands:**
+
+/help - Get a list of all available commands.
+/userinfo - Get information about yourself.
+/serverinfo - Get information about the server.
+/ping - Check the bot's latency.
+/vote [question] [option1] [option2] [option3] - Start a poll with emoji reactions. You can also set a time limit using 'time:YYYY-MM-DD HH:MM:SS' or 'hours:<number>'.
+/status - Show the bot's current status (uptime, latency, etc.).
 
