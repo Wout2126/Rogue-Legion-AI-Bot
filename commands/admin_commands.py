@@ -244,6 +244,28 @@ async def clear_timeout(self, interaction: discord.Interaction, member: discord.
         await interaction.response.send_message(f"✅ {user} has been unbanned.", ephemeral=True)
         await self.log_action("Unbanned user", interaction.user, f"User: {user}")
 
+    # /adminhelp command
+    @app_commands.command(name="adminhelp", description="Get a list of admin commands and their usage.")
+    async def adminhelp(self, interaction: discord.Interaction):
+        # Check if the user has permission
+        if not await self.has_admin_permissions(interaction):
+            await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
+            return
+
+        # Try to read the admin commands file and send it
+        try:
+            with open("data/admincommands.txt", "r") as f:
+                admin_commands = f.read()
+
+            # Send the file content to the user
+            await interaction.response.send_message(f"Here is the list of admin commands:\n```\n{admin_commands}\n```", ephemeral=True)
+
+        except FileNotFoundError:
+            await interaction.response.send_message("❌ Could not find the admin commands file.", ephemeral=True)
+        except Exception as e:
+            await interaction.response.send_message(f"❌ An error occurred while reading the file: {e}", ephemeral=True)
+
+
 # Set up cog
 async def setup(bot: commands.Bot):
     await bot.add_cog(AdminCommands(bot))
