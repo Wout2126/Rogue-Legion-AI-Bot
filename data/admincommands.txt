@@ -1,1 +1,38 @@
+1. /purge <amount>
+Explanation: Deletes a specified number of messages in the current channel.
 
+2. /sync
+Explanation: Syncs the bot's commands to the current guild.
+
+3. /status <status>
+Explanation: Sets the bot's playing status.
+
+4. /clear_roles <role>
+Explanation: Removes a specified role from all members in the guild.
+
+5. /ban <user> [reason]
+Explanation: Bans a user from the server.
+
+6. /timeout <user> <time>
+Explanation: Puts a user in timeout for a specified duration (e.g., 1d 2h 30m).
+
+7. /clear_timeout <user>
+Explanation: Clears the timeout for a user if they are currently timed out.
+
+8. /kick <user> [reason]
+Explanation: Kicks a user from the server.
+
+9. /warn <user>
+Explanation: Warns a user. If a user gets 3 warnings, they are automatically timed out for 2 days.
+
+10. /warnings <user>
+Explanation: Displays the warning count of a user.
+
+11. /remove_warning <user> <count>
+Explanation: Removes a specified number of warnings from a user.
+
+12. /restore_role <user>
+Explanation: Restores a user's previous role from saved data.
+
+13. /unban <user>
+Explanation: Unbans a user from the server
