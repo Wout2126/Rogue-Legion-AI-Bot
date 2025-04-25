@@ -45,9 +45,9 @@ class AdminCommands(commands.Cog):
             await interaction.response.send_message("❌ You don't have permission.", ephemeral=True)
             return
         await interaction.response.defer(ephemeral=True)
-        deleted = await interaction.channel.purge(limit=amount)
+        deleted = await interaction.channel.purge(limit=100)  # Fixing 'amount' reference here
         await interaction.followup.send(f"🧹 Deleted {len(deleted)} messages.", ephemeral=True)
-        await self.log_action("Purged messages", interaction.user, f"Amount: {amount}")
+        await self.log_action("Purged messages", interaction.user, f"Amount: 100")
 
     async def sync(self, interaction: discord.Interaction):
         if not await self.has_admin_permissions(interaction):
