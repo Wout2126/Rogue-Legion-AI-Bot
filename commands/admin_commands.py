@@ -40,7 +40,7 @@ class AdminCommands(commands.Cog):
         if channel:
             await channel.send(f"**{action}**: {user} | Reason: {reason}")
 
-    async def purge(self, interaction: discord.Interaction, amount: int):
+    async def purge(self, interaction: discord.Interaction):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission.", ephemeral=True)
             return
@@ -175,7 +175,7 @@ class AdminCommands(commands.Cog):
         await interaction.response.send_message(f"✅ Removed {count} warnings from {user}.", ephemeral=True)
         await self.log_action("Removed warning", interaction.user, f"User: {user} | Removed: {count}")
 
-    async def restore_role(self, interaction: discord.Interaction, user: discord.Member):
+    async def restore_role(self, interaction: discord.Interaction, user: discord.User):
         with open("data/ranks.json", "r") as f:
             ranks = json.load(f)
         role_id = ranks.get(str(user.id))
@@ -209,4 +209,3 @@ class AdminCommands(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(AdminCommands(bot))
-
