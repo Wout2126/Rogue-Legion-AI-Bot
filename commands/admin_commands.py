@@ -30,7 +30,7 @@ class AdminCommands(commands.Cog):
         self.tree.command(name="unban", description="Unban a user from the server.", guild=self.guild)(self.unban)
         self.tree.command(name="adminhelp", description="Get a list of admin commands and their usage.", guild=self.guild)(self.adminhelp)
 
-    async def has_admin_permissions(self, interaction: discord.Interaction):
+    async def has_admin_permissions(self, interaction):
         roles = [role.name.lower() for role in interaction.user.roles]
         return any(role in ['admin', 'moderator', 'founder'] for role in roles)
 
@@ -40,7 +40,7 @@ class AdminCommands(commands.Cog):
         if channel:
             await channel.send(f"**{action}**: {user} | Reason: {reason}")
 
-    async def purge(self, interaction: discord.Interaction):
+    async def purge(self, interaction):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission.", ephemeral=True)
             return
@@ -49,7 +49,7 @@ class AdminCommands(commands.Cog):
         await interaction.followup.send(f"🧹 Deleted {len(deleted)} messages.", ephemeral=True)
         await self.log_action("Purged messages", interaction.user, f"Amount: 100")
 
-    async def sync(self, interaction: discord.Interaction):
+    async def sync(self, interaction):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission.", ephemeral=True)
             return
@@ -61,7 +61,7 @@ class AdminCommands(commands.Cog):
             await interaction.followup.send(f"❌ Failed to sync: {e}", ephemeral=True)
         await self.log_action("Synced commands", interaction.user)
 
-    async def clear_roles(self, interaction: discord.Interaction, role: discord.Role):
+    async def clear_roles(self, interaction, role: discord.Role):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission.", ephemeral=True)
             return
@@ -74,7 +74,7 @@ class AdminCommands(commands.Cog):
         await interaction.followup.send(f"🧼 Removed '{role.name}' from {count} users.", ephemeral=True)
         await self.log_action("Cleared role", interaction.user, f"Role: {role.name} - Count: {count}")
 
-    async def ban(self, interaction: discord.Interaction, user: discord.User, reason: str = None):
+    async def ban(self, interaction, user: discord.User, reason: str = None):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission.", ephemeral=True)
             return
@@ -83,7 +83,7 @@ class AdminCommands(commands.Cog):
         await interaction.followup.send(f"✅ {user} has been banned.", ephemeral=True)
         await self.log_action("Banned user", interaction.user, f"User: {user} | Reason: {reason}")
 
-    async def timeout(self, interaction: discord.Interaction, member: discord.Member, time: str):
+    async def timeout(self, interaction, member: discord.Member, time: str):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission.", ephemeral=True)
             return
@@ -111,7 +111,7 @@ class AdminCommands(commands.Cog):
         except Exception as e:
             await interaction.response.send_message(f"❌ Error: {e}", ephemeral=True)
 
-    async def clear_timeout(self, interaction: discord.Interaction, member: discord.Member):
+    async def clear_timeout(self, interaction, member: discord.Member):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission.", ephemeral=True)
             return
@@ -125,7 +125,7 @@ class AdminCommands(commands.Cog):
         else:
             await interaction.response.send_message("❌ User is not timed out.", ephemeral=True)
 
-    async def kick(self, interaction: discord.Interaction, user: discord.User, reason: str = None):
+    async def kick(self, interaction, user: discord.User, reason: str = None):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission.", ephemeral=True)
             return
@@ -134,7 +134,7 @@ class AdminCommands(commands.Cog):
         await interaction.followup.send(f"✅ {user} has been kicked.", ephemeral=True)
         await self.log_action("Kicked user", interaction.user, f"User: {user} | Reason: {reason}")
 
-    async def warn(self, interaction: discord.Interaction, user: discord.User):
+    async def warn(self, interaction, user: discord.User):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission.", ephemeral=True)
             return
@@ -154,12 +154,12 @@ class AdminCommands(commands.Cog):
         await interaction.followup.send(f"⚠️ {user} warned. Total: {warnings[str(user.id)]}.", ephemeral=True)
         await self.log_action("Warned user", interaction.user, f"User: {user} | Total: {warnings[str(user.id)]}")
 
-    async def warnings(self, interaction: discord.Interaction, user: discord.User):
+    async def warnings(self, interaction, user: discord.User):
         with open("data/warnings.json", "r") as f:
             warnings = json.load(f)
         await interaction.response.send_message(f"⚠️ {user} has {warnings.get(str(user.id), 0)} warnings.", ephemeral=True)
 
-    async def remove_warning(self, interaction: discord.Interaction, user: discord.User, count: int):
+    async def remove_warning(self, interaction, user: discord.User, count: int):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission.", ephemeral=True)
             return
@@ -175,7 +175,7 @@ class AdminCommands(commands.Cog):
         await interaction.response.send_message(f"✅ Removed {count} warnings from {user}.", ephemeral=True)
         await self.log_action("Removed warning", interaction.user, f"User: {user} | Removed: {count}")
 
-    async def restore_role(self, interaction: discord.Interaction, user: discord.User):
+    async def restore_role(self, interaction, user: discord.User):
         with open("data/ranks.json", "r") as f:
             ranks = json.load(f)
         role_id = ranks.get(str(user.id))
@@ -187,7 +187,7 @@ class AdminCommands(commands.Cog):
         else:
             await interaction.response.send_message("❌ No role data or role not found.", ephemeral=True)
 
-    async def unban(self, interaction: discord.Interaction, user: discord.User):
+    async def unban(self, interaction, user: discord.User):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission.", ephemeral=True)
             return
@@ -195,7 +195,7 @@ class AdminCommands(commands.Cog):
         await interaction.response.send_message(f"✅ {user} unbanned.", ephemeral=True)
         await self.log_action("Unbanned user", interaction.user, f"User: {user}")
 
-    async def adminhelp(self, interaction: discord.Interaction):
+    async def adminhelp(self, interaction):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission.", ephemeral=True)
             return
@@ -209,3 +209,4 @@ class AdminCommands(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(AdminCommands(bot))
+
