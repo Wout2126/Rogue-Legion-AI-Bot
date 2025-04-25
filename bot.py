@@ -15,6 +15,9 @@ intents.message_content = True  # Only needed if you use message-based commands
 # Initialize the bot
 bot = commands.Bot(command_prefix="/", intents=intents)
 
+# REMOVE the default help command to avoid conflict with custom one
+bot.remove_command("help")
+
 # Load cogs and command modules on ready
 @bot.event
 async def on_ready():
