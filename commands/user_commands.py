@@ -28,9 +28,8 @@ class UserCommands(commands.Cog):
         embed.add_field(name="Username", value=user.name, inline=False)
         embed.add_field(name="ID", value=user.id, inline=False)
         embed.add_field(name="Account Created", value=user.created_at.strftime("%B %d, %Y"), inline=False)
-        # joined_at is not available in Interaction.user; need Member object
         member = interaction.guild.get_member(user.id)
-        if member:
+        if member and member.joined_at:
             embed.add_field(name="Joined Server", value=member.joined_at.strftime("%B %d, %Y"), inline=False)
             embed.add_field(name="Roles", value=", ".join([role.name for role in member.roles[1:]]), inline=False)
         await interaction.response.send_message(embed=embed)
@@ -79,12 +78,7 @@ class UserCommands(commands.Cog):
         embed.add_field(name="Bot Users", value=len(self.bot.users), inline=False)
         await interaction.response.send_message(embed=embed)
 
-    async def cog_load(self):
-        # Register all commands for a specific guild to avoid global wait time
-        guild = discord.Object(id=YOUR_GUILD_ID)  # Replace with your actual guild ID
-        self.bot.tree.copy_global_to(guild=guild)
-        await self.bot.tree.sync(guild=guild)
-
-# Setup function required to load the cog
+# Setup function to load the cog
 async def setup(bot):
     await bot.add_cog(UserCommands(bot))
+
