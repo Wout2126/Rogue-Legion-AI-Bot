@@ -95,61 +95,52 @@ class AdminCommands(commands.Cog):
         await interaction.followup.send(f"✅ {user} has been banned.", ephemeral=True)
         await self.log_action("Banned user", interaction.user, f"User: {user} | Reason: {reason}")
 
-   # /timeout command - Timeout a user for a specified duration (days:hours:minutes format)
-@app_commands.command(name="timeout", description="Put a user in timeout for a specified duration (e.g., 1d 2h 30m).")
-async def timeout(self, interaction: discord.Interaction, member: discord.Member, time: str):
-    if not await self.has_admin_permissions(interaction):
-        await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
-        return
+  # / timeout command
+    @app_commands.command(name="timeout", description="Put a user in timeout for a specified duration (e.g., 1d 2h 30m).")
+    async def timeout(self, interaction: discord.Interaction, member: discord.Member, time: str):
+        if not await self.has_admin_permissions(interaction):
+            await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
+            return
 
-    # Parse the time string into days, hours, and minutes
-    try:
-        time_parts = time.lower().split()
-        total_time = timedelta()
-        for part in time_parts:
-            if part.endswith('d'):
-                total_time += timedelta(days=int(part[:-1]))
-            elif part.endswith('h'):
-                total_time += timedelta(hours=int(part[:-1]))
-            elif part.endswith('m'):
-                total_time += timedelta(minutes=int(part[:-1]))
-            else:
-                raise ValueError(f"Invalid time format: {part}")
-    except Exception as e:
-        await interaction.response.send_message(f"❌ Invalid time format. Example: `1d 2h 30m`", ephemeral=True)
-        return
-
-    # Timeout the user
-    try:
-        await member.timeout_for(total_time)
-        await interaction.response.send_message(f"✅ {member} has been timed out for {total_time}.", ephemeral=True)
-
-        # Log the action
-        await self.log_action("Timed out user", interaction.user, f"User: {member} | Duration: {total_time}")
-
-    except Exception as e:
-        await interaction.response.send_message(f"❌ Error: {e}", ephemeral=True)
-
-   # /clear_timeout command - Clear the timeout from a user
-@app_commands.command(name="clear_timeout", description="Remove the timeout from a user.")
-async def clear_timeout(self, interaction: discord.Interaction, member: discord.Member):
-    if not await self.has_admin_permissions(interaction):
-        await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
-        return
-
-    # Clear the timeout from the user
-    if member.timed_out:
+        # Parse time
         try:
-            await member.timeout_for(None)  # Removes the timeout
-            await interaction.response.send_message(f"✅ {member}'s timeout has been cleared.", ephemeral=True)
+            time_parts = time.lower().split()
+            total_time = timedelta()
+            for part in time_parts:
+                if part.endswith('d'):
+                    total_time += timedelta(days=int(part[:-1]))
+                elif part.endswith('h'):
+                    total_time += timedelta(hours=int(part[:-1]))
+                elif part.endswith('m'):
+                    total_time += timedelta(minutes=int(part[:-1]))
+                else:
+                    raise ValueError(f"Invalid time format: {part}")
+        except Exception:
+            await interaction.response.send_message(f"❌ Invalid time format. Example: `1d 2h 30m`", ephemeral=True)
+            return
 
-            # Log the action
-            await self.log_action("Cleared timeout", interaction.user, f"User: {member}")
-
+        try:
+            await member.timeout_for(total_time)
+            await interaction.response.send_message(f"✅ {member} has been timed out for {total_time}.", ephemeral=True)
+            await self.log_action("Timed out user", interaction.user, f"User: {member} | Duration: {total_time}")
         except Exception as e:
             await interaction.response.send_message(f"❌ Error: {e}", ephemeral=True)
-    else:
-        await interaction.response.send_message(f"❌ {member} is not currently timed out.", ephemeral=True)
+
+    @app_commands.command(name="clear_timeout", description="Remove the timeout from a user.")
+    async def clear_timeout(self, interaction: discord.Interaction, member: discord.Member):
+        if not await self.has_admin_permissions(interaction):
+            await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
+            return
+
+        if member.timed_out_until:
+            try:
+                await member.timeout_for(None)
+                await interaction.response.send_message(f"✅ {member}'s timeout has been cleared.", ephemeral=True)
+                await self.log_action("Cleared timeout", interaction.user, f"User: {member}")
+            except Exception as e:
+                await interaction.response.send_message(f"❌ Error: {e}", ephemeral=True)
+        else:
+            await interaction.response.send_message(f"❌ {member} is not currently timed out.", ephemeral=True)
 
 
     # /kick command
