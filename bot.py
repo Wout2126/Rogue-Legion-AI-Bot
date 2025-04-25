@@ -22,8 +22,13 @@ bot.remove_command("help")
 @bot.event
 async def on_ready():
     print(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
-    print("🔄 Syncing slash commands...")
+    print("🔄 Loading cogs...")
 
+    # Load extensions
+    await load_extensions()
+
+    # Sync commands after all cogs are loaded
+    print("🔄 Syncing slash commands...")
     try:
         synced = await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
         print(f"✅ Synced {len(synced)} commands to guild {GUILD_ID}")
@@ -52,9 +57,7 @@ async def load_extensions():
 # Run the bot
 async def main():
     async with bot:
-        await load_extensions()
         await bot.start(DISCORD_TOKEN)
 
 import asyncio
 asyncio.run(main())
-
