@@ -13,10 +13,11 @@ intents.members = True
 intents.message_content = True  # Only needed if you use message-based commands
 
 # Initialize the bot
-bot = commands.Bot(command_prefix="!", intents=intents)
+bot = commands.Bot(command_prefix="/", intents=intents)
 
 # Load cogs and command modules on ready
 @bot.event
+bot.remove_command("help")
 async def on_ready():
     print(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
     print("🔄 Syncing slash commands...")
