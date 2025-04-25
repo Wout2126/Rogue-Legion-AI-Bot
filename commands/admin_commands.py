@@ -30,7 +30,7 @@ class AdminCommands(commands.Cog):
             await channel.send(f"**{action}**: {user} | Reason: {reason}")
 
     # /purge command
-@app_commands.command(name="purge", description="Delete a specified number of messages.")
+    @app_commands.command(name="purge", description="Delete a specified number of messages.")
     async def purge(self, interaction: discord.Interaction, amount: int):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
@@ -42,7 +42,7 @@ class AdminCommands(commands.Cog):
         await self.log_action("Purged messages", interaction.user, f"Amount: {amount}")
 
     # /sync command
-@app_commands.command(name="sync", description="Sync commands to this guild.")
+    @app_commands.command(name="sync", description="Sync commands to this guild.")
     async def sync(self, interaction: discord.Interaction):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
@@ -56,9 +56,8 @@ class AdminCommands(commands.Cog):
             await interaction.followup.send(f"❌ Failed to sync commands: {e}", ephemeral=True)
         await self.log_action("Synced commands", interaction.user)
 
-
     # /clear_roles command
-@app_commands.command(name="clear_roles", description="Clear a role from all members.")
+    @app_commands.command(name="clear_roles", description="Clear a role from all members.")
     async def clear_roles(self, interaction: discord.Interaction, role: discord.Role):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
@@ -74,7 +73,7 @@ class AdminCommands(commands.Cog):
         await self.log_action("Cleared role", interaction.user, f"Role: {role.name} - Count: {count}")
 
     # /ban command
-@app_commands.command(name="ban", description="Ban a user from the server.")
+    @app_commands.command(name="ban", description="Ban a user from the server.")
     async def ban(self, interaction: discord.Interaction, user: discord.User, reason: str = None):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
@@ -85,8 +84,8 @@ class AdminCommands(commands.Cog):
         await interaction.followup.send(f"✅ {user} has been banned.", ephemeral=True)
         await self.log_action("Banned user", interaction.user, f"User: {user} | Reason: {reason}")
 
-  # / timeout command
-@app_commands.command(name="timeout", description="Put a user in timeout for a specified duration (e.g., 1d 2h 30m).")
+    # /timeout command
+    @app_commands.command(name="timeout", description="Put a user in timeout for a specified duration (e.g., 1d 2h 30m).")
     async def timeout(self, interaction: discord.Interaction, member: discord.Member, time: str):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
@@ -116,7 +115,7 @@ class AdminCommands(commands.Cog):
         except Exception as e:
             await interaction.response.send_message(f"❌ Error: {e}", ephemeral=True)
 
-@app_commands.command(name="clear_timeout", description="Remove the timeout from a user.")
+    @app_commands.command(name="clear_timeout", description="Remove the timeout from a user.")
     async def clear_timeout(self, interaction: discord.Interaction, member: discord.Member):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
@@ -132,9 +131,8 @@ class AdminCommands(commands.Cog):
         else:
             await interaction.response.send_message(f"❌ {member} is not currently timed out.", ephemeral=True)
 
-
     # /kick command
-@app_commands.command(name="kick", description="Kick a user from the server.")
+    @app_commands.command(name="kick", description="Kick a user from the server.")
     async def kick(self, interaction: discord.Interaction, user: discord.User, reason: str = None):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
@@ -146,7 +144,7 @@ class AdminCommands(commands.Cog):
         await self.log_action("Kicked user", interaction.user, f"User: {user} | Reason: {reason}")
 
     # /warn command
-@app_commands.command(name="warn", description="Warn a user and track the warnings.")
+    @app_commands.command(name="warn", description="Warn a user and track the warnings.")
     async def warn(self, interaction: discord.Interaction, user: discord.User):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
@@ -169,7 +167,7 @@ class AdminCommands(commands.Cog):
         await self.log_action("Warned user", interaction.user, f"User: {user} | Total Warnings: {warnings[str(user.id)]}")
 
     # /warnings command
-@app_commands.command(name="warnings", description="Check the warning count of a user.")
+    @app_commands.command(name="warnings", description="Check the warning count of a user.")
     async def warnings(self, interaction: discord.Interaction, user: discord.User):
         with open("data/warnings.json", "r") as f:
             warnings = json.load(f)
@@ -178,7 +176,7 @@ class AdminCommands(commands.Cog):
         await interaction.response.send_message(f"⚠️ {user} has {warning_count} warnings.", ephemeral=True)
 
     # /remove_warning command
-@app_commands.command(name="remove_warning", description="Remove a specified number of warnings from a user.")
+    @app_commands.command(name="remove_warning", description="Remove a specified number of warnings from a user.")
     async def remove_warning(self, interaction: discord.Interaction, user: discord.User, count: int):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
@@ -197,7 +195,7 @@ class AdminCommands(commands.Cog):
         await self.log_action("Removed warning", interaction.user, f"User: {user} | Warnings Removed: {count}")
 
     # /restore_role command
-@app_commands.command(name="restore_role", description="Restore a user's role based on their previous rank.")
+    @app_commands.command(name="restore_role", description="Restore a user's role based on their previous rank.")
     async def restore_role(self, interaction: discord.Interaction, user: discord.User):
         with open("data/ranks.json", "r") as f:
             ranks = json.load(f)
@@ -215,7 +213,7 @@ class AdminCommands(commands.Cog):
             await interaction.response.send_message("❌ No role data found for this user.", ephemeral=True)
 
     # /unban command
-@app_commands.command(name="unban", description="Unban a user from the server.")
+    @app_commands.command(name="unban", description="Unban a user from the server.")
     async def unban(self, interaction: discord.Interaction, user: discord.User):
         if not await self.has_admin_permissions(interaction):
             await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
@@ -226,7 +224,7 @@ class AdminCommands(commands.Cog):
         await self.log_action("Unbanned user", interaction.user, f"User: {user}")
 
     # /adminhelp command
-@app_commands.command(name="adminhelp", description="Get a list of admin commands and their usage.")
+    @app_commands.command(name="adminhelp", description="Get a list of admin commands and their usage.")
     async def adminhelp(self, interaction: discord.Interaction):
         # Check if the user has permission
         if not await self.has_admin_permissions(interaction):
@@ -246,8 +244,8 @@ class AdminCommands(commands.Cog):
         except Exception as e:
             await interaction.response.send_message(f"❌ An error occurred while reading the file: {e}", ephemeral=True)
 
-
 # Set up cog
 async def setup(bot: commands.Bot):
     await bot.add_cog(AdminCommands(bot))
+
 
