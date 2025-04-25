@@ -8,6 +8,7 @@ import asyncio
 intents = discord.Intents.default()
 intents.message_content = True  # Make sure the bot can read message content
 bot = commands.Bot(command_prefix='/', intents=intents)
+bot.remove_command("help")  # Remove default help command
 
 # Load usercommands.txt file for /help
 def load_help_text():
@@ -17,9 +18,11 @@ def load_help_text():
     except FileNotFoundError:
         return "Help text file not found."
 
-# Commands
-
 # /help command to show help text
+@bot.command(name="help", help="Show help for all commands")
+async def help_command(ctx):
+    help_text = load_help_text()
+    await ctx.send(help_text)
 
 # /userinfo command to display user information
 @bot.command(name="userinfo", help="Get information about yourself")
@@ -65,7 +68,7 @@ async def vote(ctx, question: str, *options: str):
         time_limit_str = options[-2][5:]
         try:
             time_limit = datetime.datetime.strptime(time_limit_str, "%Y-%m-%d %H:%M:%S")
-            options = options[:-2]  # Remove the time option from the list
+            options = options[:-2]
         except ValueError:
             await ctx.send("Invalid date format. Please use YYYY-MM-DD HH:MM:SS.")
             return
@@ -73,29 +76,24 @@ async def vote(ctx, question: str, *options: str):
         try:
             hours = int(options[-1][6:])
             time_limit = datetime.datetime.utcnow() + datetime.timedelta(hours=hours)
-            options = options[:-1]  # Remove the time option from the list
+            options = options[:-1]
         except ValueError:
             await ctx.send("Invalid number of hours.")
             return
 
-    # Prepare the poll message with formatting
     poll_message = f"||**Poll**: {question}||\n\n"
     emojis = ['🇦', '🇧', '🇨', '🇩', '🇪']
     for i, option in enumerate(options):
         poll_message += f"{emojis[i]}: {option}\n"
 
-    # Send the message with the poll question
     poll_message = await ctx.send(f"**Poll started!** {poll_message}")
 
-    # Add reactions for each option
     for i in range(len(options)):
         await poll_message.add_reaction(emojis[i])
 
-    # Wait for the timeout if any
     if time_limit:
         await asyncio.sleep((time_limit - datetime.datetime.utcnow()).total_seconds())
         await poll_message.channel.send(f"The poll has ended! {question}")
-        # Optionally, you can tally the votes here
 
 # /status command to show bot status (could include custom statuses, up-time, etc.)
 @bot.command(name="status", help="Show the bot's current status")
