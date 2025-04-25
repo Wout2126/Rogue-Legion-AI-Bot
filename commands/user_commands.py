@@ -20,10 +20,7 @@ def load_help_text():
 # Commands
 
 # /help command to show help text
-@bot.command(name="help", help="Get a list of all available commands")
-async def help_command(ctx):
-    help_text = load_help_text()
-    await ctx.send(help_text)
+bot.remove_command("help")
 
 # /userinfo command to display user information
 @bot.command(name="userinfo", help="Get information about yourself")
