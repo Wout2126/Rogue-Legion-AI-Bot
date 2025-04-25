@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from discord import Interaction, app_commands
+from discord import app_commands
 import logging
 import json
 from datetime import timedelta
