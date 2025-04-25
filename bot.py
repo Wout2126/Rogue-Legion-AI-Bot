@@ -17,7 +17,6 @@ bot = commands.Bot(command_prefix="/", intents=intents)
 
 # Load cogs and command modules on ready
 @bot.event
-bot.remove_command("help")
 async def on_ready():
     print(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
     print("🔄 Syncing slash commands...")
