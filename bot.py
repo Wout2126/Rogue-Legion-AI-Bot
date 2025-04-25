@@ -10,35 +10,19 @@ load_dotenv()
 # Set up intents (includes member events for onboarding, etc.)
 intents = discord.Intents.default()
 intents.members = True
-intents.message_content = True  # Only needed if you use message-based commands
+intents.message_content = True
 
 # Initialize the bot
 bot = commands.Bot(command_prefix="/", intents=intents)
+bot.remove_command("help")  # Remove default help command
 
-# REMOVE the default help command to avoid conflict with custom one
-bot.remove_command("help")
-
-# Load cogs and command modules on ready
+# Event: Bot is ready
 @bot.event
 async def on_ready():
     print(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
-    print("🔄 Loading cogs...")
-
-    # Load extensions
-    await load_extensions()
-
-    # Sync commands after all cogs are loaded
-    print("🔄 Syncing slash commands...")
-    try:
-        synced = await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
-        print(f"✅ Synced {len(synced)} commands to guild {GUILD_ID}")
-    except Exception as e:
-        print(f"❌ Failed to sync commands: {e}")
-
-    # Optionally, set bot status
     await bot.change_presence(activity=discord.Game(name="Serving Rogue Legion"))
 
-# Load extensions
+# Load extensions/cogs
 async def load_extensions():
     extensions = [
         "cogs.onboarding",
@@ -54,9 +38,18 @@ async def load_extensions():
         except Exception as e:
             print(f"❌ Failed to load {ext}: {e}")
 
-# Run the bot
+    # Sync slash commands to specific guild
+    print("🔄 Syncing slash commands...")
+    try:
+        synced = await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
+        print(f"✅ Synced {len(synced)} slash commands to guild {GUILD_ID}")
+    except Exception as e:
+        print(f"❌ Failed to sync commands: {e}")
+
+# Main bot runner
 async def main():
     async with bot:
+        await load_extensions()
         await bot.start(DISCORD_TOKEN)
 
 import asyncio
