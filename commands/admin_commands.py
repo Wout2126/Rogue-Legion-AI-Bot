@@ -56,16 +56,6 @@ class AdminCommands(commands.Cog):
             await interaction.followup.send(f"❌ Failed to sync commands: {e}", ephemeral=True)
         await self.log_action("Synced commands", interaction.user)
 
-    # /status command
-@app_commands.command(name="status", description="Set the bot's playing status.")
-    async def status(self, interaction: discord.Interaction, *, status: str):
-        if not await self.has_admin_permissions(interaction):
-            await interaction.response.send_message("❌ You don't have permission to use this command.", ephemeral=True)
-            return
-        
-        await self.bot.change_presence(activity=discord.Game(name=status))
-        await interaction.response.send_message(f"✅ Status updated to: {status}", ephemeral=True)
-        await self.log_action("Changed status", interaction.user, f"New Status: {status}")
 
     # /clear_roles command
 @app_commands.command(name="clear_roles", description="Clear a role from all members.")
