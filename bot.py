@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-import os
+import logging
 import asyncio
 from dotenv import load_dotenv
 from config import DISCORD_TOKEN, GUILD_ID
@@ -18,7 +18,6 @@ bot = commands.Bot(command_prefix="/", intents=intents)
 bot.remove_command("help")
 
 # Logger (optional but recommended)
-import logging
 logging.basicConfig(level=logging.INFO)
 bot.logger = logging.getLogger("bot")
 
@@ -58,6 +57,18 @@ async def load_extensions():
         except Exception as e:
             bot.logger.error(f"❌ Failed to load {ext}: {e}")
 
-    # Load command group (admin/user/etc.)
-    try:
-        from commands
+    # Load dynamic command groups (admin, user)
+    command_groups = [
+        "commands.admin_commands",
+        "commands.user_commands"  # Add if necessary
+    ]
+    
+    for group in command_groups:
+        try:
+            await bot.load_extension(group)
+            bot.logger.info(f"✅ Loaded: {group}")
+        except Exception as e:
+            bot.logger.error(f"❌ Failed to load {group}: {e}")
+
+# Run the bot
+bot.run(DISCORD_TOKEN)
