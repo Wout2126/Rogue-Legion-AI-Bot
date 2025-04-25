@@ -11,6 +11,7 @@ load_dotenv()
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True  # Only needed if you use message-based commands
+bot.remove_command("help")
 
 # Initialize the bot
 bot = commands.Bot(command_prefix="/", intents=intents)
