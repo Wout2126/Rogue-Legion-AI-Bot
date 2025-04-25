@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import os
+import asyncio
 from dotenv import load_dotenv
 from config import DISCORD_TOKEN, GUILD_ID
 
@@ -16,47 +17,47 @@ intents.message_content = True
 bot = commands.Bot(command_prefix="/", intents=intents)
 bot.remove_command("help")
 
-# Track whether we've synced already
+# Logger (optional but recommended)
+import logging
+logging.basicConfig(level=logging.INFO)
+bot.logger = logging.getLogger("bot")
+
+# Track sync state
 has_synced = False
 
 @bot.event
 async def on_ready():
     global has_synced
 
-    print(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
+    bot.logger.info(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
 
     if not has_synced:
-        print("🔄 Loading cogs...")
+        bot.logger.info("🔄 Loading cogs and commands...")
         await load_extensions()
 
-        print("🔄 Syncing slash commands...")
+        bot.logger.info("🔄 Syncing slash commands...")
         try:
             synced = await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
-            print(f"✅ Synced {len(synced)} slash commands to guild {GUILD_ID}")
+            bot.logger.info(f"✅ Synced {len(synced)} slash commands to guild {GUILD_ID}")
             has_synced = True
         except Exception as e:
-            print(f"❌ Failed to sync commands: {e}")
+            bot.logger.error(f"❌ Failed to sync commands: {e}")
 
     await bot.change_presence(activity=discord.Game(name="Serving Rogue Legion"))
 
 async def load_extensions():
-    extensions = [
+    # Load static cogs
+    static_cogs = [
         "cogs.onboarding",
-        "cogs.flag_bot",
-        "commands.user_commands",
-        "commands.admin_commands"
+        "cogs.flag_bot"
     ]
-    for ext in extensions:
+    for ext in static_cogs:
         try:
             await bot.load_extension(ext)
-            print(f"✅ Loaded: {ext}")
+            bot.logger.info(f"✅ Loaded: {ext}")
         except Exception as e:
-            print(f"❌ Failed to load {ext}: {e}")
+            bot.logger.error(f"❌ Failed to load {ext}: {e}")
 
-# Run the bot
-async def main():
-    async with bot:
-        await bot.start(DISCORD_TOKEN)
-
-import asyncio
-asyncio.run(main())
+    # Load command group (admin/user/etc.)
+    try:
+        from commands
