@@ -20,7 +20,6 @@ def load_help_text():
 # Commands
 
 # /help command to show help text
-bot.remove_command("help")
 
 # /userinfo command to display user information
 @bot.command(name="userinfo", help="Get information about yourself")
